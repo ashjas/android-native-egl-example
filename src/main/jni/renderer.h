@@ -68,6 +68,8 @@ private:
     static void* threadStartCallback(void *myself);
 
     void drawPoints();
+
+    void drawLines();
 };
 
 #endif // RENDERER_H

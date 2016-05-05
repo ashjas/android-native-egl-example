@@ -26,11 +26,12 @@
 
 #define LOG_TAG "EglSample"
 #define _RES 20
-static const GLfloat RES=20.0;
+static const GLfloat RES=_RES;
 GLfloat pntVertex[_RES*2*2][_RES*2*2];
+GLfloat lineVertex[_RES*2][2];
 static GLfloat line_vertex[][3]= {
-        {-10.0,0,0},
-        {10.0,0,0}
+        {-RES,-RES,0},
+        {RES,-RES,0}
 };
 static GLfloat point_vertex2[][3]= {
         {-1.0,1.0,0},
@@ -287,6 +288,17 @@ void Renderer::destroy() {
         {RES,RES,0.0},
         {RES,-RES,0.0},
  * */
+void Renderer::drawLines()
+{
+    int k=0,l=0;
+    for(int i=RES;i >= -RES ;i--)
+    {
+        for(int j= -RES;j<=RES; j++)
+        {
+            //lineVertex[k][l++]=
+        }
+    }
+}
 void Renderer::drawPoints()
 {
     int k=0,l=0;
@@ -316,29 +328,28 @@ void Renderer::drawFrame()
     //glRotatef(45,0,1,0);
     //glTranslatef(0.0, 0.0, 0.0f);
     glEnableClientState(GL_VERTEX_ARRAY);
-    drawPoints();
+    //drawPoints();
 
     glColor4f(1,1,1,1);
     //glTranslatef(0, 0, -3.0f);
-    glLineWidth(5);
-    for(int i=0;i<20;i++)
+    //glLineWidth(5);
+
+    for(int i=0;i<RES*2;i++)
     {
-        //glTranslatef(0,1,0);
-        glVertexPointer(3,GL_FLOAT,0,line_vertex);
-        //glColorPointer(4, GL_FIXED, 0, colors);
-        glDrawArrays(GL_LINES,0,2);
-    }/**/
-    /*
-    glRotatef(90,0,0,1);
-    for(int i=0;i<20;i++)
-    glColor4f(1,0,0,1);
-    {
-        //glTranslatef(0,0,1);
+        glTranslatef(0,1,0);
         glVertexPointer(3,GL_FLOAT,0,line_vertex);
         //glColorPointer(4, GL_FIXED, 0, colors);
         glDrawArrays(GL_LINES,0,2);
     }
-
+    glTranslatef(0,-RES*2,0);/**/
+    glRotatef(90,0,0,1);
+    for(int i=0;i<RES*2;i++)
+    {
+        glTranslatef(0,1,0);
+        glVertexPointer(3,GL_FLOAT,0,line_vertex);
+        //glColorPointer(4, GL_FIXED, 0, colors);
+        glDrawArrays(GL_LINES,0,2);
+    }
     /**/
     //glTranslatef(-20,0,0);// bring back to 0,0,0
     // cube
