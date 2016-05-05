@@ -67,6 +67,7 @@ private:
     // Helper method for starting the thread 
     static void* threadStartCallback(void *myself);
 
+    void drawPoints();
 };
 
 #endif // RENDERER_H
