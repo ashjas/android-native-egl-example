@@ -70,6 +70,10 @@ private:
     void drawPoints();
 
     void drawLines();
+
+    void drawCube();
+
+
 };
 
 #endif // RENDERER_H

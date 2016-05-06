@@ -23,9 +23,10 @@
 
 #include "logger.h"
 #include "renderer.h"
+#include "glulookat.h"
 
 #define LOG_TAG "EglSample"
-#define _RES 20
+#define _RES 10
 static const GLfloat RES=_RES;
 GLfloat pntVertex[_RES*2*2][_RES*2*2];
 GLfloat lineVertex[_RES*2][2];
@@ -50,15 +51,15 @@ static GLfloat  point_corners[][3]= {
         {RES,RES,0.0},
         {RES,-RES,0.0},
 };
-static GLint vertices[][3] = {
-    { -0x50000, -0x50000, -0x50000 },
-    {  0x50000, -0x50000, -0x50000 },
-    {  0x50000,  0x50000, -0x50000 },
-    { -0x50000,  0x50000, -0x50000 },
-    { -0x50000, -0x50000,  0x50000 },
-    {  0x50000, -0x50000,  0x50000 },
-    {  0x50000,  0x50000,  0x50000 },
-    { -0x50000,  0x50000,  0x50000 }
+static GLfloat vertices[][3] = {
+    { -4.0, -4.0, -4.0 },
+    {  4.0, -4.0, -4.0 },
+    {  4.0,  4.0, -4.0 },
+    { -4.0,  4.0, -4.0 },
+    { -4.0, -4.0,  4.0 },
+    {  4.0, -4.0,  4.0 },
+    {  4.0,  4.0,  4.0 },
+    { -4.0,  4.0,  4.0 }
 };
 
 static GLint colors[][4] = {
@@ -259,11 +260,35 @@ bool Renderer::initialize()
     ratio = (GLfloat) width / height;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //glFrustumf(-ratio, ratio, -ratio, ratio, -ratio*2, ratio*2);
+   // glFrustumf(-ratio, ratio, -ratio, ratio, -ratio, ratio);
+    //glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+
     //glFrustumf(-RES, RES, -RES, RES, -RES, RES);
+    //glFrustumf(-RES*2,RES*2,-RES*2,RES*2,-RES*2,RES*2);
 
 
-    glOrthof(-RES,RES,-RES,RES,-RES,RES);
+    //glOrthof(-RES*2,RES*2,-RES*2,RES*2,-RES*2,RES*2);
+    GLfloat zNear,zFar,left,right,top,bottom;
+    GLfloat cx=0.0,cy=0.0,cz=0.0;
+    zNear=-1.0;
+    zFar = zNear + RES*2;
+    left = cx - RES*2;
+    right = cx + RES*2;
+    bottom = cy - RES*2;
+    top = cy + RES*2;
+    GLfloat aspect = (GLfloat) width / height;
+
+    if ( aspect < 1.0 ) { // window taller than wide
+        bottom /= aspect;
+        top /= aspect;
+    } else {
+        left *= aspect;
+        right *= aspect;
+    }
+    glOrthof(left, right, bottom, top, zNear, zFar);
+    //glFrustumf(left, right, bottom, top, zNear, zFar);
+
+    LOG_INFO("left:%f, right:%f, bottom:%f, top:%f, zNear:%f, zFar:%f",(float)left, (float)right, (float)bottom, (float)top, (float)zNear, (float)zFar);
 
     return true;
 }
@@ -290,14 +315,28 @@ void Renderer::destroy() {
  * */
 void Renderer::drawLines()
 {
-    int k=0,l=0;
-    for(int i=RES;i >= -RES ;i--)
+
+    //glLineWidth(5);
+
+    for(int i=0;i<=RES*2;i++)
     {
-        for(int j= -RES;j<=RES; j++)
-        {
-            //lineVertex[k][l++]=
-        }
+        glTranslatef(0,1,0);
+        glVertexPointer(3,GL_FLOAT,0,line_vertex);
+        //glColorPointer(4, GL_FIXED, 0, colors);
+        glDrawArrays(GL_LINES,0,2);
     }
+    glTranslatef(0,-RES*2,0);/**/
+    glRotatef(-90,0,0,1);
+    glTranslatef(0,-1,0);
+    //glColor4f(1,0,0,1);
+    for(int i=0;i<=RES*2;i++)
+    {
+        glTranslatef(0,1,0);
+        //glVertexPointer(3,GL_FLOAT,0,line_vertex);
+        //glColorPointer(4, GL_FIXED, 0, colors);
+        glDrawArrays(GL_LINES,0,2);
+    }
+    glTranslatef(0,-RES*2,0);
 }
 void Renderer::drawPoints()
 {
@@ -306,68 +345,52 @@ void Renderer::drawPoints()
     {
         for(int j = -RES;j <= RES;j++)
         {
-            pntVertex[k][l++] = j++;
+            pntVertex[k][l++] = j;
             pntVertex[k][l++] = i;
         }
         k++;l=0;
     }
-    glColor4f(1,1,1,1);
     glPointSize(8);
     //glVertexPointer(3,GL_FLOAT,0,point_vertex2);
     //glVertexPointer(3,GL_FLOAT,0,point_corners);
     glVertexPointer(2,GL_FLOAT,0,pntVertex);
-    glDrawArrays(GL_POINTS,0,RES*RES*4);
+    glDrawArrays(GL_POINTS,0,(RES*RES*4));
 }
-void Renderer::drawFrame()
+
+void Renderer::drawCube()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    //glRotatef(45,1,0,0);
-    //glRotatef(45,0,1,0);
-    //glTranslatef(0.0, 0.0, 0.0f);
-    glEnableClientState(GL_VERTEX_ARRAY);
-    //drawPoints();
-
-    glColor4f(1,1,1,1);
-    //glTranslatef(0, 0, -3.0f);
-    //glLineWidth(5);
-
-    for(int i=0;i<RES*2;i++)
-    {
-        glTranslatef(0,1,0);
-        glVertexPointer(3,GL_FLOAT,0,line_vertex);
-        //glColorPointer(4, GL_FIXED, 0, colors);
-        glDrawArrays(GL_LINES,0,2);
-    }
-    glTranslatef(0,-RES*2,0);/**/
-    glRotatef(90,0,0,1);
-    for(int i=0;i<RES*2;i++)
-    {
-        glTranslatef(0,1,0);
-        glVertexPointer(3,GL_FLOAT,0,line_vertex);
-        //glColorPointer(4, GL_FIXED, 0, colors);
-        glDrawArrays(GL_LINES,0,2);
-    }
-    /**/
-    //glTranslatef(-20,0,0);// bring back to 0,0,0
-    // cube
-
-    //glTranslatef(0, 0, -3.0f);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glTranslatef(0, 0, -3.0f);
     //glRotatef(_angle, 0, 1, 0);
     //glRotatef(_angle*0.25f, 1, 0, 0);
-
-/*
-    
     //glFrontFace(GL_CW);
     //glColor4f(1,0,0,0);
-    glVertexPointer(3, GL_FIXED, 0, vertices);
+    glVertexPointer(3, GL_FLOAT, 0, vertices);
     glColorPointer(4, GL_FIXED, 0, colors);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, indices);
 
     _angle += 1.2f;
-     /**/
+}
+void Renderer::drawFrame()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    //glRotatef(dX,1,0,0);
+    //glRotatef(dY,0,1,0);
+    GLfloat mv[16];
+    glGetFloatv(GL_MODELVIEW_MATRIX,mv);
+    //view_set_lookat(mv,0.0,0.0,5.0,0.0,0.0,0.0,0.0,1.0,0.0);
+    glLoadMatrixf(mv);
+    //glRotatef(45,1,0,0);
+    //glRotatef(45,0,1,0);
+    //glTranslatef(0.0, 0.0, 10.0f);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glColor4f(1,1,1,1);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    //drawPoints();
+    drawLines();
+    drawCube();
 }
 
 void* Renderer::threadStartCallback(void *myself)
