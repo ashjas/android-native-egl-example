@@ -94,8 +94,8 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
-                    float deltaX = (x - mPreviousX) / (RES);
-                    float deltaY = (y - mPreviousY) / (RES);
+                    float deltaX = (x - mPreviousX) ;
+                    float deltaY = (y - mPreviousY) ;
                     //float deltaX = (x - mDownX) / (RES*2);
                     //float deltaY = (y - mDownY) / (RES*2);
 
@@ -106,7 +106,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                     float diffy = (y - (mPreviousY + mDeltaY))/(RES*2);
                    // mDeltaX+=diffx;
                    // mDeltaY+=diffy;
-                    Log.d(TAG,"ACTION_MOVE --> diffX:" + diffx/RES*2 +",diffY:" + diffy/RES*2);
+                   // Log.d(TAG,"ACTION_MOVE --> diffX:" + diffx/RES*2 +",diffY:" + diffy/RES*2);
 
 
                     mPreviousX = x;

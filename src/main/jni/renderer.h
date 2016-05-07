@@ -56,6 +56,8 @@ private:
     GLfloat _angle;
     GLfloat dX;
     GLfloat dY;
+    GLfloat _width;
+    GLfloat _height;
     // RenderLoop is called in a rendering thread started in start() method
     // It creates rendering context and renders scene until stop() is called
     void renderLoop();

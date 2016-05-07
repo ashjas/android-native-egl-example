@@ -263,6 +263,8 @@ bool Renderer::initialize()
     glViewport(0, 0, width, height);
 
     ratio = (GLfloat) width / height;
+    _width = width;
+    _height = height;
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
    // glFrustumf(-ratio, ratio, -ratio, ratio, -ratio, ratio);
@@ -382,7 +384,25 @@ void Renderer::drawFrame()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(dX,-dY,0);
+    GLfloat actualResX,actualResY;
+    //actualResX = (RES*2)/_width;
+    //actualResY = (RES*2)/_height;
+    GLfloat aspect = (GLfloat) _width / _height;
+    if(aspect < 1.0)
+    {
+      //  dY /= aspect;
+        //dX /= aspect;
+        actualResX = RES*2/_width;
+        actualResY = (RES*2) /aspect/_height;
+    }
+    else
+    {
+        actualResY = RES*2/_height;
+        actualResX = ((RES*2) * aspect) /_width;
+       // dX *= aspect;
+        //dY /= aspect;
+    }
+    glTranslatef(dX*actualResX,-dY*actualResY,0);
     //LOG_INFO("dX,dY: %f,%f",dX,dY);
     //glRotatef(dX,1,0,0);
     //glRotatef(dY,0,1,0);
