@@ -27,6 +27,7 @@
 
 #define LOG_TAG "EglSample"
 #define _RES 40
+static bool ortho = true;
 static const GLfloat RES=_RES;
 GLfloat pntVertex[_RES*2*2][_RES*2*2];
 GLfloat lineVertex[_RES*2][2];
@@ -84,7 +85,7 @@ GLubyte indices[] = {
 
 
 Renderer::Renderer()
-    : _msg(MSG_NONE), _display(0), _surface(0), _context(0), _angle(0),dX(0),dY(0),_zoom(1)
+    : _msg(MSG_NONE), _display(0), _surface(0), _context(0), _angle(0),dX(0),dY(0),_zoom(1),zoomchanged(false),isOrtho(ortho)
 {
     LOG_INFO("Renderer instance created");
     pthread_mutex_init(&_mutex, 0);    
@@ -180,6 +181,43 @@ void Renderer::renderLoop()
     return;
 }
 
+void Renderer::setProjection()
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // glFrustumf(-ratio, ratio, -ratio, ratio, -ratio, ratio);
+    //glFrustumf(-ratio, ratio, -1, 1, 1, 10);
+
+    //glFrustumf(-RES, RES, -RES, RES, -RES, RES);
+    //glFrustumf(-RES*2,RES*2,-RES*2,RES*2,-RES*2,RES*2);
+
+
+    //glOrthof(-RES*2,RES*2,-RES*2,RES*2,-RES*2,RES*2);
+    GLfloat zNear,zFar,left,right,top,bottom;
+    GLfloat cx=0.0,cy=0.0,cz=0.0;
+    zNear=-1.0f;
+    zFar = zNear + RES;
+    left = cx - RES;
+    right = cx + RES;
+    bottom = cy - RES;
+    top = cy + RES;
+    GLfloat aspect = (GLfloat) _width / _height;
+
+    if ( aspect < 1.0 ) { // window taller than wide
+        bottom /= aspect;
+        top /= aspect;
+    } else {
+        left *= aspect;
+        right *= aspect;
+    }
+    if(isOrtho)
+        glOrthof(left*_zoom, right*_zoom, bottom*_zoom, top*_zoom, zNear, zFar);
+    else
+        glFrustumf(left*_zoom, right*_zoom, bottom*_zoom, top*_zoom, zNear, zFar);
+
+    LOG_INFO("left:%f, right:%f, bottom:%f, top:%f, zNear:%f, zFar:%f",(float)left, (float)right, (float)bottom, (float)top, (float)zNear, (float)zFar);
+
+}
 bool Renderer::initialize()
 {
     const EGLint attribs[] = {
@@ -265,38 +303,7 @@ bool Renderer::initialize()
     ratio = (GLfloat) width / height;
     _width = width;
     _height = height;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-   // glFrustumf(-ratio, ratio, -ratio, ratio, -ratio, ratio);
-    //glFrustumf(-ratio, ratio, -1, 1, 1, 10);
-
-    //glFrustumf(-RES, RES, -RES, RES, -RES, RES);
-    //glFrustumf(-RES*2,RES*2,-RES*2,RES*2,-RES*2,RES*2);
-
-
-    //glOrthof(-RES*2,RES*2,-RES*2,RES*2,-RES*2,RES*2);
-    GLfloat zNear,zFar,left,right,top,bottom;
-    GLfloat cx=0.0,cy=0.0,cz=0.0;
-    zNear=-1.0;
-    zFar = zNear + RES;
-    left = cx - RES;
-    right = cx + RES;
-    bottom = cy - RES;
-    top = cy + RES;
-    GLfloat aspect = (GLfloat) width / height;
-
-    if ( aspect < 1.0 ) { // window taller than wide
-        bottom /= aspect;
-        top /= aspect;
-    } else {
-        left *= aspect;
-        right *= aspect;
-    }
-    glOrthof(left, right, bottom, top, zNear, zFar);
-    //glFrustumf(left, right, bottom, top, zNear, zFar);
-
-    LOG_INFO("left:%f, right:%f, bottom:%f, top:%f, zNear:%f, zFar:%f",(float)left, (float)right, (float)bottom, (float)top, (float)zNear, (float)zFar);
-
+    setProjection();
     return true;
 }
 
@@ -382,7 +389,7 @@ void Renderer::drawCube()
 void Renderer::doPanning()
 {
     GLfloat actualResX,actualResY;
-    GLfloat aspect = (GLfloat) _width / _height;
+    GLfloat aspect = (GLfloat) (_width / _height) ;
     if(aspect < 1.0)
     {
         actualResX = RES*2/_width;
@@ -393,22 +400,27 @@ void Renderer::doPanning()
         actualResY = RES*2/_height;
         actualResX = ((RES*2) * aspect) /_width;
     }
-    glTranslatef(dX*actualResX,-dY*actualResY,0);
+    glTranslatef(dX*actualResX*_zoom,-dY*actualResY*_zoom,0);
 }
 void Renderer::setZoom(float z) {
  _zoom *= z;
+    zoomchanged = true;
 }
 void Renderer::doZooming()
 {
-    glScalef(_zoom,_zoom,_zoom);
+    //glScalef(_zoom,_zoom,_zoom);
+    if(zoomchanged == true)
+        setProjection();
+    zoomchanged = false;
 }
 void Renderer::drawFrame()
 {
+    doZooming();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     doPanning();
-    doZooming();
+
     //LOG_INFO("dX,dY: %f,%f",dX,dY);
     //glRotatef(dX,1,0,0);
     //glRotatef(dY,0,1,0);

@@ -130,7 +130,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                         if(fingers == 2) {
 
                             float newDist = fingerDist(event);
-                            float d = newDist /distance;
+                            float d = distance/newDist;
                             distance = newDist;
                             Log.d(TAG,"zoom:"+d);
                             setZoom(d);
