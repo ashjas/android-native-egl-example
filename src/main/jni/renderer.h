@@ -77,6 +77,7 @@ private:
     void drawCube();
 
 
+    void doPanning();
 };
 
 #endif // RENDERER_H

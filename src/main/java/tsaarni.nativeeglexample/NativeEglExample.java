@@ -90,43 +90,23 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                     Log.d(TAG,"ACTION_DOWN --> X:" + x +",Y:" + y);
                     mPreviousX = mDownX = x;
                     mPreviousY = mDownY = y;
-                    //return true;
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
-                    float deltaX = (x - mPreviousX) ;
-                    float deltaY = (y - mPreviousY) ;
-                    //float deltaX = (x - mDownX) / (RES*2);
-                    //float deltaY = (y - mDownY) / (RES*2);
-
-                    mDeltaX += deltaX;
-                    mDeltaY += deltaY;
-
-                    float diffx = (x - (mPreviousX + mDeltaX))/(RES*2);
-                    float diffy = (y - (mPreviousY + mDeltaY))/(RES*2);
-                   // mDeltaX+=diffx;
-                   // mDeltaY+=diffy;
-                   // Log.d(TAG,"ACTION_MOVE --> diffX:" + diffx/RES*2 +",diffY:" + diffy/RES*2);
-
-
+                    mDeltaX += (x - mPreviousX) ;
+                    mDeltaY += (y - mPreviousY) ;
                     mPreviousX = x;
                     mPreviousY = y;
                     setPan2(mDeltaX,mDeltaY);
-                    //Log.d(TAG,"ACTION_MOVE --> X:" + x +",Y:" + y);
                     Log.d(TAG,"ACTION_MOVE --> dX:" + mDeltaX +",dY:" + mDeltaY);
-                    //return true;
                     break;
                 }
                 case MotionEvent.ACTION_UP: {
                     Log.d(TAG,"ACTION_UP --> X:" + x +",Y:" + y);
-                    //return true;
                     break;
                 }
             }
-
         }
-
-
         return super.onTouchEvent(event);
     }
     @Override

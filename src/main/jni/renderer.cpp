@@ -26,7 +26,7 @@
 #include "glulookat.h"
 
 #define LOG_TAG "EglSample"
-#define _RES 20
+#define _RES 40
 static const GLfloat RES=_RES;
 GLfloat pntVertex[_RES*2*2][_RES*2*2];
 GLfloat lineVertex[_RES*2][2];
@@ -379,19 +379,12 @@ void Renderer::drawCube()
     _angle += 1.2f;
 }
 
-void Renderer::drawFrame()
+void Renderer::doPanning()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
     GLfloat actualResX,actualResY;
-    //actualResX = (RES*2)/_width;
-    //actualResY = (RES*2)/_height;
     GLfloat aspect = (GLfloat) _width / _height;
     if(aspect < 1.0)
     {
-      //  dY /= aspect;
-        //dX /= aspect;
         actualResX = RES*2/_width;
         actualResY = (RES*2) /aspect/_height;
     }
@@ -399,10 +392,15 @@ void Renderer::drawFrame()
     {
         actualResY = RES*2/_height;
         actualResX = ((RES*2) * aspect) /_width;
-       // dX *= aspect;
-        //dY /= aspect;
     }
     glTranslatef(dX*actualResX,-dY*actualResY,0);
+}
+void Renderer::drawFrame()
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    doPanning();
     //LOG_INFO("dX,dY: %f,%f",dX,dY);
     //glRotatef(dX,1,0,0);
     //glRotatef(dY,0,1,0);
