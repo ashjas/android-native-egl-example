@@ -80,3 +80,11 @@ Java_tsaarni_nativeeglexample_NativeEglExample_setPan2(JNIEnv *env, jclass type,
     renderer->setPan(x,y);
 
 }
+JNIEXPORT void JNICALL
+Java_tsaarni_nativeeglexample_NativeEglExample_setZoom(JNIEnv *env, jclass type, jfloat d) {
+
+    // TODO
+    renderer->setZoom(d);
+
+}
+

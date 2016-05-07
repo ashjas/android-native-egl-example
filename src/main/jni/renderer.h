@@ -34,6 +34,7 @@ public:
     void stop();
     void setWindow(ANativeWindow* window);
     void setPan(float X, float Y);
+    void setZoom(float D);
     
 private:
 
@@ -58,6 +59,7 @@ private:
     GLfloat dY;
     GLfloat _width;
     GLfloat _height;
+    GLfloat _zoom;
     // RenderLoop is called in a rendering thread started in start() method
     // It creates rendering context and renders scene until stop() is called
     void renderLoop();
@@ -78,6 +80,8 @@ private:
 
 
     void doPanning();
+
+    void doZooming();
 };
 
 #endif // RENDERER_H

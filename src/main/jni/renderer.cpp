@@ -84,7 +84,7 @@ GLubyte indices[] = {
 
 
 Renderer::Renderer()
-    : _msg(MSG_NONE), _display(0), _surface(0), _context(0), _angle(0),dX(0),dY(0)
+    : _msg(MSG_NONE), _display(0), _surface(0), _context(0), _angle(0),dX(0),dY(0),_zoom(1)
 {
     LOG_INFO("Renderer instance created");
     pthread_mutex_init(&_mutex, 0);    
@@ -395,12 +395,20 @@ void Renderer::doPanning()
     }
     glTranslatef(dX*actualResX,-dY*actualResY,0);
 }
+void Renderer::setZoom(float z) {
+ _zoom *= z;
+}
+void Renderer::doZooming()
+{
+    glScalef(_zoom,_zoom,_zoom);
+}
 void Renderer::drawFrame()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     doPanning();
+    doZooming();
     //LOG_INFO("dX,dY: %f,%f",dX,dY);
     //glRotatef(dX,1,0,0);
     //glRotatef(dY,0,1,0);

@@ -19,6 +19,7 @@ package tsaarni.nativeeglexample;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.widget.Toast;
 import android.view.Surface;
@@ -46,6 +47,9 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
     private float mUpY = 0;
     private float w = 0;
     private float h = 0;
+    private float distance = 0;
+    private int fingers = 0;
+    private int zoomActive = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +81,11 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
         Log.d(TAG,"w:" + displayMetrics.widthPixels +",h:" + displayMetrics.heightPixels);
 
     }
+    protected final float fingerDist(MotionEvent event){
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+        return FloatMath.sqrt(x * x + y * y);
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -86,6 +95,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
             float y = event.getY();
             switch(event.getAction())
             {
+
                 case MotionEvent.ACTION_DOWN: {
                     Log.d(TAG,"ACTION_DOWN --> X:" + x +",Y:" + y);
                     mPreviousX = mDownX = x;
@@ -93,15 +103,45 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
-                    mDeltaX += (x - mPreviousX) ;
-                    mDeltaY += (y - mPreviousY) ;
-                    mPreviousX = x;
-                    mPreviousY = y;
-                    setPan2(mDeltaX,mDeltaY);
-                    Log.d(TAG,"ACTION_MOVE --> dX:" + mDeltaX +",dY:" + mDeltaY);
+
+                    if(zoomActive != 1 && event.getPointerCount() == 1) {
+                        if(fingers == 0)
+                            fingers = 1;
+                        if(fingers == 2 )
+                            fingers = 1;
+                        else {
+                            mDeltaX += (x - mPreviousX) ;
+                            mDeltaY += (y - mPreviousY) ;
+                            mPreviousX = x;
+                            mPreviousY = y;
+                            setPan2(mDeltaX, mDeltaY);
+                        }
+                    }
+
+                    if(event.getPointerCount() == 2)
+                    {
+                        zoomActive = 1;
+                        Log.d(TAG,"2 fingers.. var:"+fingers);
+                        if(fingers == 1)
+                        {
+                            distance = fingerDist(event);
+                            fingers = 2;
+                        }
+                        if(fingers == 2) {
+
+                            float newDist = fingerDist(event);
+                            float d = newDist /distance;
+                            distance = newDist;
+                            Log.d(TAG,"zoom:"+d);
+                            setZoom(d);
+                        }
+                    }
+                    //Log.d(TAG,"ACTION_MOVE --> dX:" + mDeltaX +",dY:" + mDeltaY);
+                   // Log.d(TAG,"fingers:"+event.getPointerCount());
                     break;
                 }
                 case MotionEvent.ACTION_UP: {
+                    zoomActive = 0;
                     Log.d(TAG,"ACTION_UP --> X:" + x +",Y:" + y);
                     break;
                 }
@@ -146,6 +186,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
     public static native void nativeOnResume();
     public static native void nativeOnPause();
     public static native void setPan2(float x,float y);
+    public static native void setZoom(float d);
     public static native void nativeOnStop();
     public static native void nativeSetSurface(Surface surface);
 
