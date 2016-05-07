@@ -26,7 +26,7 @@
 #include "glulookat.h"
 
 #define LOG_TAG "EglSample"
-#define _RES 10
+#define _RES 20
 static const GLfloat RES=_RES;
 GLfloat pntVertex[_RES*2*2][_RES*2*2];
 GLfloat lineVertex[_RES*2][2];
@@ -84,7 +84,7 @@ GLubyte indices[] = {
 
 
 Renderer::Renderer()
-    : _msg(MSG_NONE), _display(0), _surface(0), _context(0), _angle(0)
+    : _msg(MSG_NONE), _display(0), _surface(0), _context(0), _angle(0),dX(0),dY(0)
 {
     LOG_INFO("Renderer instance created");
     pthread_mutex_init(&_mutex, 0);    
@@ -276,11 +276,11 @@ bool Renderer::initialize()
     GLfloat zNear,zFar,left,right,top,bottom;
     GLfloat cx=0.0,cy=0.0,cz=0.0;
     zNear=-1.0;
-    zFar = zNear + RES*2;
-    left = cx - RES*2;
-    right = cx + RES*2;
-    bottom = cy - RES*2;
-    top = cy + RES*2;
+    zFar = zNear + RES;
+    left = cx - RES;
+    right = cx + RES;
+    bottom = cy - RES;
+    top = cy + RES;
     GLfloat aspect = (GLfloat) width / height;
 
     if ( aspect < 1.0 ) { // window taller than wide
@@ -382,7 +382,7 @@ void Renderer::drawFrame()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(dX,dY,0);
+    glTranslatef(dX,-dY,0);
     //LOG_INFO("dX,dY: %f,%f",dX,dY);
     //glRotatef(dX,1,0,0);
     //glRotatef(dY,0,1,0);

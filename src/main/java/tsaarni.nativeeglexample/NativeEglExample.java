@@ -33,7 +33,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
 {
 
     private static String TAG = "EglSample";
-
+    private static float RES = 20;
     private float mDensity = 0;
     private float mPreviousX =0;
     private float mPreviousY =0;
@@ -44,6 +44,8 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
     private float mDownY = 0;
     private float mUpX = 0;
     private float mUpY = 0;
+    private float w = 0;
+    private float h = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +72,9 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         mDensity = displayMetrics.density;
+        w = displayMetrics.widthPixels;
+        h = displayMetrics.heightPixels;
+        Log.d(TAG,"w:" + displayMetrics.widthPixels +",h:" + displayMetrics.heightPixels);
 
     }
     @Override
@@ -89,12 +94,20 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
-                    //float deltaX = (x - mPreviousX) / mDensity / 2f;
-                    //float deltaY = (y - mPreviousY) / mDensity / 2f;
-                    float deltaX = (x - mPreviousX) ;
-                    float deltaY = (y - mPreviousY) ;
-                    mDeltaX = deltaX;
-                    mDeltaY = deltaY;
+                    float deltaX = (x - mPreviousX) / (RES);
+                    float deltaY = (y - mPreviousY) / (RES);
+                    //float deltaX = (x - mDownX) / (RES*2);
+                    //float deltaY = (y - mDownY) / (RES*2);
+
+                    mDeltaX += deltaX;
+                    mDeltaY += deltaY;
+
+                    float diffx = (x - (mPreviousX + mDeltaX))/(RES*2);
+                    float diffy = (y - (mPreviousY + mDeltaY))/(RES*2);
+                   // mDeltaX+=diffx;
+                   // mDeltaY+=diffy;
+                    Log.d(TAG,"ACTION_MOVE --> diffX:" + diffx/RES*2 +",diffY:" + diffy/RES*2);
+
 
                     mPreviousX = x;
                     mPreviousY = y;
