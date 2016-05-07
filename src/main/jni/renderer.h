@@ -33,7 +33,7 @@ public:
     void start();
     void stop();
     void setWindow(ANativeWindow* window);
-    
+    void setPan(float X, float Y);
     
 private:
 
@@ -54,7 +54,8 @@ private:
     EGLSurface _surface;
     EGLContext _context;
     GLfloat _angle;
-    
+    GLfloat dX;
+    GLfloat dY;
     // RenderLoop is called in a rendering thread started in start() method
     // It creates rendering context and renders scene until stop() is called
     void renderLoop();

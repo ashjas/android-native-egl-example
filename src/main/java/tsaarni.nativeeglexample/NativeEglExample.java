@@ -18,6 +18,8 @@ package tsaarni.nativeeglexample;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.widget.Toast;
 import android.view.Surface;
 import android.view.SurfaceView;
@@ -32,6 +34,16 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
 
     private static String TAG = "EglSample";
 
+    private float mDensity = 0;
+    private float mPreviousX =0;
+    private float mPreviousY =0;
+    private float mDeltaX = 0;
+    private float mDeltaY = 0;
+
+    private float mDownX = 0;
+    private float mDownY = 0;
+    private float mUpX = 0;
+    private float mUpY = 0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,13 +53,13 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
         setContentView(R.layout.main);
         SurfaceView surfaceView = (SurfaceView)findViewById(R.id.surfaceview);
         surfaceView.getHolder().addCallback(this);
-        surfaceView.setOnClickListener(new OnClickListener() {
+       /* surfaceView.setOnClickListener(new OnClickListener() {
                 public void onClick(View view) {
                     Toast toast = Toast.makeText(NativeEglExample.this,
                                                  "This demo combines Java UI and native EGL + OpenGL renderer",
                                                  Toast.LENGTH_LONG);
                     toast.show();
-                }});
+                }});*/
     }
 
     @Override
@@ -55,8 +67,55 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
         super.onStart();
         Log.i(TAG, "onStart()");
         nativeOnStart();
-    }
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        mDensity = displayMetrics.density;
 
+    }
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        if (event != null)
+        {
+            float x = event.getX();
+            float y = event.getY();
+            switch(event.getAction())
+            {
+                case MotionEvent.ACTION_DOWN: {
+                    Log.d(TAG,"ACTION_DOWN --> X:" + x +",Y:" + y);
+                    mPreviousX = mDownX = x;
+                    mPreviousY = mDownY = y;
+                    //return true;
+                    break;
+                }
+                case MotionEvent.ACTION_MOVE: {
+                    //float deltaX = (x - mPreviousX) / mDensity / 2f;
+                    //float deltaY = (y - mPreviousY) / mDensity / 2f;
+                    float deltaX = (x - mPreviousX) ;
+                    float deltaY = (y - mPreviousY) ;
+                    mDeltaX = deltaX;
+                    mDeltaY = deltaY;
+
+                    mPreviousX = x;
+                    mPreviousY = y;
+                    setPan2(mDeltaX,mDeltaY);
+                    //Log.d(TAG,"ACTION_MOVE --> X:" + x +",Y:" + y);
+                    Log.d(TAG,"ACTION_MOVE --> dX:" + mDeltaX +",dY:" + mDeltaY);
+                    //return true;
+                    break;
+                }
+                case MotionEvent.ACTION_UP: {
+                    Log.d(TAG,"ACTION_UP --> X:" + x +",Y:" + y);
+                    //return true;
+                    break;
+                }
+            }
+
+        }
+
+
+        return super.onTouchEvent(event);
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -93,6 +152,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
     public static native void nativeOnStart();
     public static native void nativeOnResume();
     public static native void nativeOnPause();
+    public static native void setPan2(float x,float y);
     public static native void nativeOnStop();
     public static native void nativeSetSurface(Surface surface);
 

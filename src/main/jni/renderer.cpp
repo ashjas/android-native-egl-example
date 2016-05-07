@@ -98,6 +98,11 @@ Renderer::~Renderer()
     return;
 }
 
+void Renderer::setPan(float X,float Y)
+{
+    dX = X;
+    dY = Y;
+}
 void Renderer::start()
 {
     LOG_INFO("Creating renderer thread");
@@ -371,11 +376,14 @@ void Renderer::drawCube()
 
     _angle += 1.2f;
 }
+
 void Renderer::drawFrame()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glTranslatef(dX,dY,0);
+    //LOG_INFO("dX,dY: %f,%f",dX,dY);
     //glRotatef(dX,1,0,0);
     //glRotatef(dY,0,1,0);
     GLfloat mv[16];

@@ -72,3 +72,11 @@ JNIEXPORT void JNICALL Java_tsaarni_nativeeglexample_NativeEglExample_nativeSetS
     return;
 }
 
+JNIEXPORT void JNICALL
+Java_tsaarni_nativeeglexample_NativeEglExample_setPan2(JNIEnv *env, jclass type, jfloat x,
+                                                       jfloat y) {
+
+    // TODO
+    renderer->setPan(x,y);
+
+}
