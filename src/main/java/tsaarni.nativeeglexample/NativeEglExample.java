@@ -158,6 +158,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                 }
                 case MotionEvent.ACTION_UP: {
                     zoomActive = 0;
+                    fingers = event.getPointerCount();
                     Log.d(TAG,"ACTION_UP --> X:" + x +",Y:" + y);
                     break;
                 }
