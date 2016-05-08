@@ -210,10 +210,16 @@ void Renderer::setProjection()
         left *= aspect;
         right *= aspect;
     }
-    if(isOrtho)
-        glOrthof(left*_zoom, right*_zoom, bottom*_zoom, top*_zoom, zNear*4, zFar*4);
-    else
-        glFrustumf(left*_zoom, right*_zoom, bottom*_zoom, top*_zoom, zNear, zFar);
+    if(isOrtho) {
+        left *=_zoom,right *=_zoom,bottom *=_zoom,top *=_zoom,zNear*=4,zFar *=4;
+        glOrthof(left , right, bottom, top, zNear, zFar);
+        LOG_INFO("Ortho->l:%f,r:%f,b:%f,t:%f,zN:%f,zF:%f",(float)left, (float)right, (float)bottom, (float)top, (float)zNear, (float)zFar);
+    }
+    else {
+        left *=_zoom,right *=_zoom,bottom *=_zoom,top *=_zoom;
+        glFrustumf(left , right, bottom, top, zNear, zFar);
+        LOG_INFO("Persp->l:%f,r:%f,b:%f,t:%f,zN:%f,zF:%f",(float)left, (float)right, (float)bottom, (float)top, (float)zNear, (float)zFar);
+    }
 
     LOG_INFO("left:%f, right:%f, bottom:%f, top:%f, zNear:%f, zFar:%f",(float)left, (float)right, (float)bottom, (float)top, (float)zNear, (float)zFar);
 
