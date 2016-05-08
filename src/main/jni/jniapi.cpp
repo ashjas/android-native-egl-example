@@ -87,4 +87,8 @@ Java_tsaarni_nativeeglexample_NativeEglExample_setZoom(JNIEnv *env, jclass type,
     renderer->setZoom(d);
 
 }
+JNIEXPORT void JNICALL Java_tsaarni_nativeeglexample_NativeEglExample_setOrthoCam(JNIEnv *env, jclass type, jfloat x, jfloat y)
+{
+    renderer->setOrthoCam(x,y);
+}
 

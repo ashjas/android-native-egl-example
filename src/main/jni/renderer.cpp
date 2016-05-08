@@ -211,7 +211,7 @@ void Renderer::setProjection()
         right *= aspect;
     }
     if(isOrtho)
-        glOrthof(left*_zoom, right*_zoom, bottom*_zoom, top*_zoom, zNear, zFar);
+        glOrthof(left*_zoom, right*_zoom, bottom*_zoom, top*_zoom, zNear*4, zFar*4);
     else
         glFrustumf(left*_zoom, right*_zoom, bottom*_zoom, top*_zoom, zNear, zFar);
 
@@ -374,7 +374,7 @@ void Renderer::drawPoints()
 void Renderer::drawCube()
 {
     glEnableClientState(GL_COLOR_ARRAY);
-    glTranslatef(0, 0, -3.0f);
+    glTranslatef(0, 0, 8.0f);
     //glRotatef(_angle, 0, 1, 0);
     //glRotatef(_angle*0.25f, 1, 0, 0);
     //glFrontFace(GL_CW);
@@ -406,6 +406,12 @@ void Renderer::setZoom(float z) {
  _zoom *= z;
     zoomchanged = true;
 }
+
+void Renderer::setOrthoCam(float x,float y)
+{
+    o_camX = x;
+    o_camY = y;
+}
 void Renderer::doZooming()
 {
     //glScalef(_zoom,_zoom,_zoom);
@@ -419,17 +425,19 @@ void Renderer::drawFrame()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glTranslatef(0.0, 0.0, -RES);
     doPanning();
 
     //LOG_INFO("dX,dY: %f,%f",dX,dY);
     //glRotatef(dX,1,0,0);
     //glRotatef(dY,0,1,0);
-    GLfloat mv[16];
-    glGetFloatv(GL_MODELVIEW_MATRIX,mv);
+    //GLfloat mv[16];
+    //glGetFloatv(GL_MODELVIEW_MATRIX,mv);
     //view_set_lookat(mv,0.0,0.0,5.0,0.0,0.0,0.0,0.0,1.0,0.0);
-    glLoadMatrixf(mv);
-    //glRotatef(45,1,0,0);
-    //glRotatef(45,0,1,0);
+    //glLoadMatrixf(mv);
+
+    glRotatef(o_camX,1,0,0);
+    //glRotatef(o_camY,0,1,0);
     //glTranslatef(0.0, 0.0, 10.0f);
     glDisableClientState(GL_COLOR_ARRAY);
     glColor4f(1,1,1,1);

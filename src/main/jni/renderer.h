@@ -35,6 +35,7 @@ public:
     void setWindow(ANativeWindow* window);
     void setPan(float X, float Y);
     void setZoom(float D);
+    void setOrthoCam(float x,float y);
     
 private:
 
@@ -62,6 +63,8 @@ private:
     GLfloat _zoom;
     bool zoomchanged = false;
     bool isOrtho = true;
+    float o_camX = 0.0;
+    float o_camY = 0.0;
     // RenderLoop is called in a rendering thread started in start() method
     // It creates rendering context and renders scene until stop() is called
     void renderLoop();

@@ -50,6 +50,8 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
     private float distance = 0;
     private int fingers = 0;
     private int zoomActive = 0;
+    private float o_camX = 0.0f;
+    private float o_camY = 0.0f;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,8 +100,12 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
 
                 case MotionEvent.ACTION_DOWN: {
                     Log.d(TAG,"ACTION_DOWN --> X:" + x +",Y:" + y);
-                    mPreviousX = mDownX = x;
-                    mPreviousY = mDownY = y;
+                    mPreviousX = x;
+                    mPreviousY = y;
+                    if(event.getPointerCount() == 3) {
+                        mDownX = event.getX(2);
+                        mDownY = event.getY(2);
+                    }
                     break;
                 }
                 case MotionEvent.ACTION_MOVE: {
@@ -135,6 +141,16 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                             Log.d(TAG,"zoom:"+d);
                             setZoom(d);
                         }
+                    }
+                    if(event.getPointerCount() == 3)
+                    {
+                        x = event.getX(2);
+                        y = event.getY(2);
+                        o_camX += x - mDownX;
+                        o_camY += y - mDownY;
+                        mDownX = x;
+                        mDownY = y;
+                        setOrthoCam(o_camX,o_camY);
                     }
                     //Log.d(TAG,"ACTION_MOVE --> dX:" + mDeltaX +",dY:" + mDeltaY);
                    // Log.d(TAG,"fingers:"+event.getPointerCount());
@@ -186,6 +202,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
     public static native void nativeOnResume();
     public static native void nativeOnPause();
     public static native void setPan2(float x,float y);
+    public static native void setOrthoCam(float x,float y);
     public static native void setZoom(float d);
     public static native void nativeOnStop();
     public static native void nativeSetSurface(Surface surface);
