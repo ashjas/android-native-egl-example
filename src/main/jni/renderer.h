@@ -91,6 +91,8 @@ private:
 
 
     void setProjection();
+
+    void setupLights();
 };
 
 #endif // RENDERER_H

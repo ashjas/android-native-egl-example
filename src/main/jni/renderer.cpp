@@ -240,7 +240,6 @@ GLubyte indices[] = {
     3, 0, 1,    3, 1, 2
 };
 
-
 Renderer::Renderer()
     : _msg(MSG_NONE), _display(0), _surface(0), _context(0), _angle(0),dX(0),dY(0),_zoom(1),zoomchanged(false),isOrtho(ortho)
 {
@@ -501,7 +500,9 @@ void Renderer::destroy() {
  * */
 void Renderer::drawLines()
 {
-
+    glDisableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glColor4f(1,1,1,1);
     //glLineWidth(5);
 
     for(int i=0;i<=RES*2;i++)
@@ -545,6 +546,7 @@ void Renderer::drawPoints()
 
 void Renderer::drawCube()
 {
+    glEnableClientState(GL_VERTEX_ARRAY);
     //glEnableClientState(GL_COLOR_ARRAY);
     glTranslatef(0, 0, 8.0f);
     //glRotatef(_angle, 0, 1, 0);
@@ -596,11 +598,47 @@ void Renderer::doZooming()
         setProjection();
     zoomchanged = false;
 }
+void Renderer::setupLights()
+{
+
+    GLfloat ambientLight[] = { 1.6f, 1.6f, 1.6f, 1.0f };
+    GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
+    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    GLfloat position[] = { 10.0f, 10.0f, 10.0f, 10.0f };
+    GLfloat shininess = 20;
+
+    glEnable(GL_LIGHT4);
+    glLightfv(GL_LIGHT4, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT4, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT4, GL_SPECULAR, specularLight);
+    glLightfv(GL_LIGHT4, GL_POSITION, position);
+
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
+
+    float currRot[4];
+   // [arcball getCurrentRotation:currRot];
+    //glRotatef (currRot[0], currRot[1], currRot[2], currRot[3]);
+
+    float f[4];
+    f[0] = 0.5; f[1] = 0; f[2] = 0; f[3] = 1;
+    glMaterialfv (GL_FRONT_AND_BACK, GL_AMBIENT, f);
+    glMaterialfv (GL_FRONT_AND_BACK, GL_DIFFUSE, f);
+
+    f[0] = 0.2;     f[1] = 0.2; f[2] = 0.2; f[3] = 1;
+    glMaterialfv (GL_FRONT_AND_BACK, GL_SPECULAR, f);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+
+
+}
+
 void Renderer::drawFrame()
 {
     doZooming();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable (GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
     glEnable( GL_BLEND );
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -619,9 +657,8 @@ void Renderer::drawFrame()
     glRotatef(o_camX,1,0,0);
     //glRotatef(o_camY,0,1,0);
     //glTranslatef(0.0, 0.0, 10.0f);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glColor4f(1,1,1,1);
-    glEnableClientState(GL_VERTEX_ARRAY);
+
+
     //drawPoints();
     drawLines();
     drawCube();
