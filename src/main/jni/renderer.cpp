@@ -239,7 +239,7 @@ GLubyte indices[] = {
     4, 7, 6,    4, 6, 5,
     3, 0, 1,    3, 1, 2
 };
-
+GLfloat light_position[] = { 0.0f, 25.0f, 15.0f, 15.0f };
 Renderer::Renderer()
     : _msg(MSG_NONE), _display(0), _surface(0), _context(0), _angle(0),dX(0),dY(0),_zoom(1),zoomchanged(false),isOrtho(ortho)
 {
@@ -601,17 +601,18 @@ void Renderer::doZooming()
 void Renderer::setupLights()
 {
 
-    GLfloat ambientLight[] = { 1.6f, 1.6f, 1.6f, 1.0f };
-    GLfloat diffuseLight[] = { 0.8f, 0.8f, 0.8, 1.0f };
-    GLfloat specularLight[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat position[] = { 10.0f, 10.0f, 10.0f, 10.0f };
+    GLfloat ambientLight[] = { 0.2f, 1.0f, 1.0f, 1.0f };
+    GLfloat diffuseLight[] = { 0.8f, 1.0f, 1.0, 1.0f };
+    GLfloat specularLight[] = { 0.5f, 1.0f, 1.0f, 1.0f };
+
+
     GLfloat shininess = 20;
 
-    glEnable(GL_LIGHT4);
-    glLightfv(GL_LIGHT4, GL_AMBIENT, ambientLight);
-    glLightfv(GL_LIGHT4, GL_DIFFUSE, diffuseLight);
-    glLightfv(GL_LIGHT4, GL_SPECULAR, specularLight);
-    glLightfv(GL_LIGHT4, GL_POSITION, position);
+    glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
     glShadeModel(GL_SMOOTH);
     glEnable(GL_NORMALIZE);
@@ -642,7 +643,7 @@ void Renderer::drawFrame()
     glEnable( GL_BLEND );
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
+    setupLights();
     glTranslatef(0.0, 0.0, -RES);
     doPanning();
 
@@ -662,6 +663,14 @@ void Renderer::drawFrame()
     //drawPoints();
     drawLines();
     drawCube();
+
+    //draw the light point
+    glPointSize(8);
+    glColor4f(1.0,1.0,1.0,1.0);
+    //glVertexPointer(3,GL_FLOAT,0,point_vertex2);
+    //glVertexPointer(3,GL_FLOAT,0,point_corners);
+    glVertexPointer(3,GL_FLOAT,0,light_position);
+    glDrawArrays(GL_POINTS,0,1);
 }
 
 void* Renderer::threadStartCallback(void *myself)
