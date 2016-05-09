@@ -20,7 +20,8 @@
 #include <pthread.h>
 #include <EGL/egl.h> // requires ndk r5 or newer
 #include <GLES/gl.h>
-
+#include <GLES/glext.h>
+#include <GLES/glplatform.h>
 
 class Renderer {
 
