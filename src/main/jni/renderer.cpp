@@ -27,7 +27,8 @@
 
 #define LOG_TAG "EglSample"
 #define _RES 40
-static bool ortho = true;
+#define _CUBE_EDGE 4.0
+static bool ortho = 0;
 static const GLfloat RES=_RES;
 GLfloat pntVertex[_RES*2*2][_RES*2*2];
 GLfloat lineVertex[_RES*2][2];
@@ -61,6 +62,47 @@ static GLfloat vertices[][3] = {
     {  4.0, -4.0,  4.0 },
     {  4.0,  4.0,  4.0 },
     { -4.0,  4.0,  4.0 }
+};
+
+static GLfloat tex_cube_vert[][2] = {
+    //Mapping coordinates for the vertices
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+
+    0.0f, 1.0f,
+    1.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+};
+static GLfloat tex_cube_indices[] = {
+    3,4,2,      3,2,1,
+    3,4,2,      3,2,1,
+    3,4,2,      3,2,1,
+    3,4,2,      3,2,1,
+    3,4,2,      3,2,1,
+    3,4,2,      3,2,1
 };
 
 static GLint colors[][4] = {
@@ -210,13 +252,22 @@ void Renderer::setProjection()
         left *= aspect;
         right *= aspect;
     }
-    if(isOrtho) {
+    isOrtho=1;
+    if(isOrtho==1) {
         left *=_zoom,right *=_zoom,bottom *=_zoom,top *=_zoom,zNear*=4,zFar *=4;
         glOrthof(left , right, bottom, top, zNear, zFar);
         LOG_INFO("Ortho->l:%f,r:%f,b:%f,t:%f,zN:%f,zF:%f",(float)left, (float)right, (float)bottom, (float)top, (float)zNear, (float)zFar);
     }
     else {
+        /*
+        float fov = 60.0f;
+        top = (GLfloat) tan(fov*3.14159/360.0) * zNear;
+        bottom = -top;
+        left = aspect * bottom;
+        right = aspect * top;
+         zFar=40;*/
         left *=_zoom,right *=_zoom,bottom *=_zoom,top *=_zoom;
+
         glFrustumf(left , right, bottom, top, zNear, zFar);
         LOG_INFO("Persp->l:%f,r:%f,b:%f,t:%f,zN:%f,zF:%f",(float)left, (float)right, (float)bottom, (float)top, (float)zNear, (float)zFar);
     }
