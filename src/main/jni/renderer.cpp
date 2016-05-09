@@ -156,17 +156,17 @@ static GLfloat normal_cube_data[] ={
 };
 static GLfloat color_data[][4]= {
         // Front face (red)
-        1.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.5f, 0.5f, 1.0f,
         // Front face (green)
-        0.0f, 1.0f, 0.0f, 1.0f,
+        0.5f, 1.0f, 0.5f, 1.0f,
         // Front face (blue)
-        0.0f, 0.0f, 1.0f, 1.0f,
+        0.5f, 0.5f, 1.0f, 1.0f,
         // Left face (yellow)
-        1.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 1.0f, 0.5f, 1.0f,
         // Top face (cyan)
-        0.0f, 1.0f, 1.0f, 1.0f,
+        0.5f, 1.0f, 1.0f, 1.0f,
         // Bottom face (magenta)
-        1.0f, 0.0f, 1.0f, 1.0f,
+        1.0f, 0.5f, 1.0f, 1.0f,
 };
 
 static GLfloat color_cube_data[]={
@@ -600,6 +600,8 @@ void Renderer::drawFrame()
 {
     doZooming();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable( GL_BLEND );
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
