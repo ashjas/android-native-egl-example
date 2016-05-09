@@ -154,6 +154,21 @@ static GLfloat normal_cube_data[] ={
     0.0f, -1.0f, 0.0f,
     0.0f, -1.0f, 0.0f
 };
+static GLfloat color_data[][4]= {
+        // Front face (red)
+        1.0f, 0.0f, 0.0f, 1.0f,
+        // Front face (green)
+        0.0f, 1.0f, 0.0f, 1.0f,
+        // Front face (blue)
+        0.0f, 0.0f, 1.0f, 1.0f,
+        // Left face (yellow)
+        1.0f, 1.0f, 0.0f, 1.0f,
+        // Top face (cyan)
+        0.0f, 1.0f, 1.0f, 1.0f,
+        // Bottom face (magenta)
+        1.0f, 0.0f, 1.0f, 1.0f,
+};
+
 static GLfloat color_cube_data[]={
     // Front face (red)
     1.0f, 0.0f, 0.0f, 1.0f,
@@ -530,7 +545,7 @@ void Renderer::drawPoints()
 
 void Renderer::drawCube()
 {
-    glEnableClientState(GL_COLOR_ARRAY);
+    //glEnableClientState(GL_COLOR_ARRAY);
     glTranslatef(0, 0, 8.0f);
     //glRotatef(_angle, 0, 1, 0);
     //glRotatef(_angle*0.25f, 1, 0, 0);
@@ -540,7 +555,8 @@ void Renderer::drawCube()
     //glColorPointer(4, GL_FIXED, 0, colors);
     for(int i=0;i<6;i++)
     {
-        glColorPointer(4, GL_FIXED, 0, color_cube_data+ (i*6*4));
+        //glColorPointer(4, GL_FLOAT, 0, color_data + i );
+        glColor4f(color_data[i][0],color_data[i][1],color_data[i][2],color_data[i][3]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices +(i*6) );
     }
 
