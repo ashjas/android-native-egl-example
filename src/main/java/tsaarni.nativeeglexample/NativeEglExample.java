@@ -106,7 +106,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                         mDownX = event.getX(2);
                         mDownY = event.getY(2);
                     }
-                    break;
+                    return true;
                 }
                 case MotionEvent.ACTION_MOVE: {
 
@@ -122,6 +122,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                             mPreviousY = y;
                             setPan2(mDeltaX, mDeltaY);
                         }
+                        return true;
                     }
 
                     if(event.getPointerCount() == 2)
@@ -141,6 +142,7 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                             Log.d(TAG,"zoom:"+d);
                             setZoom(d);
                         }
+                        return true;
                     }
                     if(event.getPointerCount() == 3)
                     {
@@ -154,17 +156,17 @@ public class NativeEglExample extends Activity implements SurfaceHolder.Callback
                     }
                     //Log.d(TAG,"ACTION_MOVE --> dX:" + mDeltaX +",dY:" + mDeltaY);
                    // Log.d(TAG,"fingers:"+event.getPointerCount());
-                    break;
+                    return true;
                 }
                 case MotionEvent.ACTION_UP: {
                     zoomActive = 0;
                     fingers = event.getPointerCount();
                     Log.d(TAG,"ACTION_UP --> X:" + x +",Y:" + y);
-                    break;
+                    return true;
                 }
             }
         }
-        return super.onTouchEvent(event);
+        return true;
     }
     @Override
     protected void onResume() {

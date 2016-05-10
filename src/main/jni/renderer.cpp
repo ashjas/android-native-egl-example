@@ -396,6 +396,7 @@ bool Renderer::initialize()
         EGL_BLUE_SIZE, 8,
         EGL_GREEN_SIZE, 8,
         EGL_RED_SIZE, 8,
+        //EGL_DEPTH_SIZE,16,
         EGL_NONE
     };
     EGLDisplay display;
@@ -502,13 +503,18 @@ void Renderer::drawLines()
 {
     glDisableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_VERTEX_ARRAY);
-    glColor4f(1,1,1,1);
+    glVertexPointer(3,GL_FLOAT,0,line_vertex);
     //glLineWidth(5);
+    //extra red line
 
+
+    /*glColor4f(1,0,0,1);
+    glDrawArrays(GL_LINES,0,2);*/
+    glColor4f(1,1,1,1);
     for(int i=0;i<=RES*2;i++)
     {
         glTranslatef(0,1,0);
-        glVertexPointer(3,GL_FLOAT,0,line_vertex);
+
         //glColorPointer(4, GL_FIXED, 0, colors);
         glDrawArrays(GL_LINES,0,2);
     }
@@ -523,7 +529,15 @@ void Renderer::drawLines()
         //glColorPointer(4, GL_FIXED, 0, colors);
         glDrawArrays(GL_LINES,0,2);
     }
+    //extra line
+    /*
+    glColor4f(0,1,0,1);
+    glTranslatef(0,1,0);
+    glDrawArrays(GL_LINES,0,2);
+    glTranslatef(0,-1,0);*/
     glTranslatef(0,-RES*2,0);
+    //glRotatef(90,0,0,1);
+    glColor4f(1,1,1,1);
 }
 void Renderer::drawPoints()
 {
@@ -548,7 +562,7 @@ void Renderer::drawCube()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     //glEnableClientState(GL_COLOR_ARRAY);
-    glTranslatef(0, 0, 8.0f);
+    glTranslatef(0, 0, 4.0f);
     //glRotatef(_angle, 0, 1, 0);
     //glRotatef(_angle*0.25f, 1, 0, 0);
     //glFrontFace(GL_CW);
@@ -561,7 +575,7 @@ void Renderer::drawCube()
         glColor4f(color_data[i][0],color_data[i][1],color_data[i][2],color_data[i][3]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, indices +(i*6) );
     }
-
+    glTranslatef(0, 0, -4.0f);
     _angle += 1.2f;
 }
 
@@ -637,10 +651,10 @@ void Renderer::drawFrame()
 {
     doZooming();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable (GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
-    glEnable( GL_BLEND );
+    //glEnable(GL_LIGHTING);
+    //glEnable( GL_BLEND );
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     setupLights();
@@ -648,29 +662,42 @@ void Renderer::drawFrame()
     doPanning();
 
     //LOG_INFO("dX,dY: %f,%f",dX,dY);
-    //glRotatef(dX,1,0,0);
-    //glRotatef(dY,0,1,0);
+    glRotatef(30,1,0,0);
+    glRotatef(40,0,1,0);
     //GLfloat mv[16];
     //glGetFloatv(GL_MODELVIEW_MATRIX,mv);
     //view_set_lookat(mv,0.0,0.0,5.0,0.0,0.0,0.0,0.0,1.0,0.0);
     //glLoadMatrixf(mv);
 
-    glRotatef(o_camX,1,0,0);
+    if ( o_camX >= 360.0f )
+    {
+        o_camX -= 360.0f;
+    }
+    if ( o_camY >= 360.0f )
+    {
+        o_camY -= 360.0f;
+    }
+    //glRotatef(o_camX,1,0,0);
     //glRotatef(o_camY,0,1,0);
     //glTranslatef(0.0, 0.0, 10.0f);
 
 
+
+
+    glPushMatrix();
     //drawPoints();
     drawLines();
     drawCube();
+    glPopMatrix();
 
+/*
     //draw the light point
     glPointSize(8);
     glColor4f(1.0,1.0,1.0,1.0);
     //glVertexPointer(3,GL_FLOAT,0,point_vertex2);
     //glVertexPointer(3,GL_FLOAT,0,point_corners);
     glVertexPointer(3,GL_FLOAT,0,light_position);
-    glDrawArrays(GL_POINTS,0,1);
+    glDrawArrays(GL_POINTS,0,1);*/
 }
 
 void* Renderer::threadStartCallback(void *myself)
